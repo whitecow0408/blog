@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>맛집 블로그 검색</title>
+    <style>
+        /* 기본 스타일 초기화 */
+        body, h1, h3, p, input, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", helvetica, "Apple SD Gothic Neo", sans-serif;
+        }
+        body {
+            background-color: #f5f6f7;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #03C75A; /* 네이버 녹색 */
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        /* 네이버 스타일 검색폼 */
+        #search-form {
+            display: flex;
+            width: 100%;
+            border: 2px solid #03C75A;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        #search-query {
+            flex-grow: 1;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #search-button {
+            border: none;
+            background-color: #03C75A;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 0 25px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #search-button:hover {
+            background-color: #02b350;
+        }
+
+        /* 검색 결과 리스트 */
+        #results-list {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .result-item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .result-item h3 a {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .result-item h3 a:hover {
+            text-decoration: underline;
+        }
+
+        /* Naver API가 반환하는 <b> 태그를 강조 표시 */
+        .result-item h3 a b,
+        .result-item p b {
+            color: #03C75A;
+            font-weight: 600;
+        }
+
+        .result-item p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .result-item .blogger-info {
+            font-size: 13px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>맛집 블로그 검색</h1>
+
+        <form id="search-form">
+            <input type="text" id="search-query" placeholder="예: 해운대 파스타" required>
+            <button type="submit" id="search-button">검색</button>
+        </form>
+
+        <div id="results-list">
+            <p style="text-align: center; padding: 20px; color: #777;">검색어를 입력하세요.</p>
+        </div>
+    </div>
+
+    <script>
+        // 폼 제출(submit) 이벤트 리스너
+        document.getElementById('search-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // 폼의 기본 동작(페이지 새로고침) 방지
+
+            const query = document.getElementById('search-query').value;
+            const resultsList = document.getElementById('results-list');
+
+            // 1. 로딩 표시
+            resultsList.innerHTML = '<p style="text-align: center; padding: 20px;">검색 중...</p>';
+
+            try {
+                // 2. Flask 백엔드(/search)에 API 요청
+                // encodeURIComponent는 한글 검색어가 URL에서 깨지지 않도록 인코딩합니다.
+                const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
+
+                if (!response.ok) {
+                    throw new Error('네트워크 응답에 문제가 있습니다.');
+                }
+
+                const items = await response.json();
+
+                // 3. 결과 표시
+                displayResults(items);
+
+            } catch (error) {
+                console.error('검색 중 오류 발생:', error);
+                resultsList.innerHTML = '<p style="text-align: center; padding: 20px; color: red;">검색 중 오류가 발생했습니다.</p>';
+            }
+        });
+
+        // 검색 결과를 받아 HTML로 변환하는 함수
+        function displayResults(items) {
+            const resultsList = document.getElementById('results-list');
+            
+            // 기존 결과 초기화
+            resultsList.innerHTML = '';
+
+            if (items.length === 0) {
+                resultsList.innerHTML = '<p style="text-align: center; padding: 20px;">검색 결과가 없습니다.</p>';
+                return;
+            }
+
+            // 각 아이템을 HTML 요소로 만들어 추가
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'result-item';
+
+                // Naver API는 제목(title)과 내용(description)에 <b> 태그를 포함하여 반환합니다.
+                // 이를 그대로 innerHTML로 삽입하면 강조 효과를 살릴 수 있습니다.
+                itemDiv.innerHTML = `
+                    <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+                    <p>${item.description}</p>
+                    <span class="blogger-info">
+                        <strong>블로거:</strong> ${item.bloggername}
+                    </span>
+                `;
+                resultsList.appendChild(itemDiv);
+            });
+        }
+    </script>
+
+</body>
+</html>
