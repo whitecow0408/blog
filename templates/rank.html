@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인기 검색어 순위</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", helvetica, "Apple SD Gothic Neo", sans-serif;
+            background-color: #f5f6f7;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #03C75A;
+            margin-bottom: 30px;
+        }
+        ol {
+            list-style-type: none;
+            padding-left: 0;
+            counter-reset: rank-counter; /* 순번 자동 생성 */
+        }
+        li {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            padding: 15px 10px;
+            border-bottom: 1px solid #eee;
+            counter-increment: rank-counter;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        /* 순위 (1, 2, 3...) */
+        li::before {
+            content: counter(rank-counter);
+            font-weight: bold;
+            font-size: 20px;
+            color: #03C75A;
+            width: 40px;
+            text-align: center;
+            margin-right: 15px;
+        }
+        .query-text {
+            flex-grow: 1;
+            font-weight: 500;
+        }
+        .query-count {
+            font-size: 16px;
+            color: #555;
+            font-weight: bold;
+        }
+        .no-data {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #555;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 인기 검색어 TOP 10</h1>
+        
+        {% if rankings %}
+            <ol>
+                {% for item in rankings %}
+                <li>
+                    <span class="query-text">{{ item.query }}</span>
+                    <span class="query-count">{{ item.count }}회</span>
+                </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p class="no-data">아직 검색 기록이 없습니다.</p>
+        {% endif %}
+
+        <a href="/blog" class="back-link">← 검색 페이지로 돌아가기</a>
+    </div>
+</body>
+</html>
