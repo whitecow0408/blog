@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보 포털</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 600px; width: 100%; padding: 20px; }
+        .menu-card { background: white; padding: 30px; border-radius: 15px; text-align: center; text-decoration: none; color: #333; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 150px; }
+        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+        .icon { font-size: 40px; margin-bottom: 10px; }
+        .title { font-size: 20px; font-weight: bold; }
+        /* 색상 테마 */
+        .green { color: #03C75A; }
+        .melon { color: #00d344; }
+        .blue { color: #1877f2; }
+        .orange { color: #f7b500; }
+    </style>
+</head>
+<body>
+    <div class="menu-grid">
+        <a href="/blog" class="menu-card">
+            <div class="icon green">🔍</div>
+            <div class="title">맛집 검색</div>
+        </a>
+        <a href="/melon" class="menu-card">
+            <div class="icon melon">🎵</div>
+            <div class="title">멜론 차트 (TOP 100)</div>
+        </a>
+        <!-- 가수 검색은 멜론 차트 페이지 안에서 하거나 별도로 뺄 수 있습니다. 여기선 멜론 페이지로 유도 -->
+        <a href="/rank" class="menu-card">
+            <div class="icon orange">🏆</div>
+            <div class="title">인기 검색어 순위</div>
+        </a>
+        <div class="menu-card" style="background-color: #eee; cursor: default;">
+            <div class="icon">⚙️</div>
+            <div class="title">준비 중...</div>
+        </div>
+    </div>
+</body>
+</html>

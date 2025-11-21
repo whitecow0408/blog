@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멜론 차트 & 검색</title>
+    <style>
+        /* 리셋 및 기본 폰트 */
+        body, h1, ul, li, p, form, input, button {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f5f6f7;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #00d344;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        /* --- 검색창 영역 스타일 --- */
+        .search-section {
+            padding: 15px;
+            background-color: #eefbf2; /* 연한 초록색 배경 */
+            border-bottom: 1px solid #ddd;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+        .search-box input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-box input:focus {
+            border-color: #00d344;
+        }
+        .search-box button {
+            padding: 0 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap; /* 줄바꿈 방지 */
+        }
+        .search-box button:hover {
+            background-color: #555;
+        }
+
+        /* 리스트 스타일 */
+        .chart-list {
+            list-style: none;
+        }
+        .chart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .chart-item:last-child {
+            border-bottom: none;
+        }
+        .rank {
+            font-size: 20px;
+            font-weight: bold;
+            width: 35px;
+            text-align: center;
+            margin-right: 10px;
+            color: #333;
+        }
+        .cover-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            margin-right: 15px;
+            object-fit: cover;
+            background-color: #eee;
+        }
+        .info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #111;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .artist {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        /* 하단 링크 */
+        .home-link {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            background-color: #eee;
+            color: #555;
+            text-decoration: none;
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+        }
+        .home-link:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍈 멜론 차트 TOP 100</h1>
+        </div>
+
+        <!-- 검색창 영역: 배경색을 넣어서 잘 보이게 만들었습니다 -->
+        <div class="search-section">
+            <form action="/melon/search" method="get" class="search-box">
+                <input type="text" name="artist" placeholder="가수 이름 검색 (예: 아이유)" required>
+                <button type="submit">검색</button>
+            </form>
+        </div>
+
+        <ul class="chart-list">
+            {% if chart_data %}
+                {% for song in chart_data %}
+                <li class="chart-item">
+                    <span class="rank">{{ song.rank }}</span>
+                    <img src="{{ song.image }}" class="cover-img" alt="앨범">
+                    <div class="info">
+                        <div class="title">{{ song.title }}</div>
+                        <div class="artist">{{ song.artist }}</div>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li style="text-align:center; padding:40px; color:#888;">
+                    데이터를 불러오는 중입니다.<br>잠시 후 새로고침 해보세요.
+                </li>
+            {% endif %}
+        </ul>
+        
+        <a href="/" class="home-link">🏠 메인 메뉴로 돌아가기</a>
+    </div>
+</body>
+</html>

@@ -1,13 +1,9 @@
 import sqlite3
 
-# 'search.db'라는 이름의 데이터베이스 파일을 생성합니다.
 conn = sqlite3.connect('search.db')
 cursor = conn.cursor()
 
-# 'search_log'라는 테이블을 생성합니다.
-# id: 고유 번호
-# query: 검색어
-# timestamp: 검색 시간 (자동 생성)
+# 1. 기존 검색어 저장 테이블 (이미 있으면 건너뜀)
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS search_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,7 +12,19 @@ CREATE TABLE IF NOT EXISTS search_log (
 )
 ''')
 
-print("Database 'search.db' and table 'search_log' created successfully.")
+# 2. (NEW) 멜론 차트 저장 테이블
+# 순위, 제목, 가수, 이미지 주소를 저장합니다.
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS melon_chart (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rank INTEGER,
+    title TEXT,
+    artist TEXT,
+    image TEXT
+)
+''')
+
+print("데이터베이스 초기화 완료: 'search_log'와 'melon_chart' 테이블이 준비되었습니다.")
 
 conn.commit()
 conn.close()
