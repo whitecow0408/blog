@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>점유율 분석</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f5f6f7; display: flex; justify-content: center; padding: 40px 20px; margin: 0; }
+        .container { width: 100%; max-width: 600px; background: white; border-radius: 10px; padding-bottom: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background: #00d344; color: white; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .chart-box { width: 80%; margin: 0 auto 30px auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 20px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f9f9f9; color: #555; font-size: 14px; }
+        .badge { background: #00d344; color: white; padding: 4px 8px; border-radius: 10px; font-size: 12px; }
+        .back-btn { display: block; width: 200px; margin: 30px auto 0; padding: 12px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>📊 가수별 점유율 (TOP 10)</h1></div>
+        
+        <div class="chart-box"><canvas id="shareChart"></canvas></div>
+
+        <h3 style="text-align:center; color:#333;">상세 순위</h3>
+        <table>
+            <thead><tr><th>순위</th><th>가수</th><th style="text-align:right;">곡 수</th></tr></thead>
+            <tbody>
+                {% for row in all_data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td style="font-weight:bold;">{{ row.artist }}</td>
+                    <td style="text-align:right;"><span class="badge">{{ row.count }}곡</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <a href="/melon" class="back-btn">목록으로</a>
+    </div>
+
+    <!-- [수정 완료] ensure_ascii 옵션을 제거하여 구버전 Flask에서도 오류가 나지 않도록 했습니다. -->
+    <script id="json-labels" type="application/json">{{ labels | tojson }}</script>
+    <script id="json-values" type="application/json">{{ values | tojson }}</script>
+
+    <script>
+        // 숨겨진 태그에서 데이터 텍스트 가져오기
+        const labelsText = document.getElementById('json-labels').textContent;
+        const valuesText = document.getElementById('json-values').textContent;
+
+        // 텍스트를 자바스크립트 객체(배열)로 변환
+        // 데이터가 없거나 오류가 날 경우를 대비해 빈 배열 '[]'을 기본값으로 설정
+        const labels = labelsText ? JSON.parse(labelsText) : [];
+        const values = valuesText ? JSON.parse(valuesText) : [];
+
+        // 차트 그리기
+        const ctx = document.getElementById('shareChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ['#00d344','#36a2eb','#ffce56','#ff6384','#9966ff','#4bc0c0','#ff9f40','#c9cbcf','#7CFC00','#008080'],
+                    borderWidth: 1
+                }]
+            },
+            options: { 
+                responsive: true, 
+                plugins: { 
+                    legend: { position: 'bottom' } 
+                } 
+            }
+        });
+    </script>
+</body>
+</html>

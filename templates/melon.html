@@ -135,12 +135,18 @@
             <h1>🍈 멜론 차트 TOP 100</h1>
         </div>
 
-        <!-- 검색창 영역: 배경색을 넣어서 잘 보이게 만들었습니다 -->
+        <!-- 검색창 영역 -->
         <div class="search-section">
-            <form action="/melon/search" method="get" class="search-box">
+            <!-- 1. 검색 폼 -->
+            <form action="/melon/search" method="get" class="search-box" style="margin-bottom: 15px;">
                 <input type="text" name="artist" placeholder="가수 이름 검색 (예: 아이유)" required>
                 <button type="submit">검색</button>
             </form>
+
+            <!-- 2. (NEW) 점유율 분석 버튼 추가 -->
+            <a href="/melon/share" style="display: block; text-align: center; background-color: white; color: #00d344; padding: 10px; border: 1px solid #00d344; border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.2s;">
+                📊 가수별 점유율 분석 보기
+            </a>
         </div>
 
         <ul class="chart-list">
